@@ -6,6 +6,9 @@ param (
     [string]$Operation = "add"
 )
 
+# Copyright (c) Aware Group Ltd.
+# Licensed under the MIT License.
+
 if (!$GroupName) {
     Read-Host "Please enter the existing group name you would like to designate as an administrative group (https://accounts.azuredatabricks.net/users/groups)"
 }
