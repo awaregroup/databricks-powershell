@@ -1,5 +1,9 @@
 #!/usr/bin/env pwsh
 param([switch]$RegisterPathInCurrentSession)
+
+# Copyright (c) Aware Group Ltd.
+# Licensed under the MIT License.
+
 $ErrorActionPreference = "Stop"
 
 
