@@ -13,11 +13,7 @@ $TARGET = "$PSScriptRoot/databricks-cli"
 # Include operating system in file name.
 if (($Env:OS -eq "Windows_NT") -or $IsWindows ) {
     $FILE = "${FILE}_windows"
-}
-elseif ($IsLinux) {
-    $FILE = "${FILE}_linux"
-}
-elseif ($IsMacOS) {
+} elseif ($IsMacOS) {
     $FILE = "${FILE}_darwin"
 } else {
     $FILE = "${FILE}_linux"
