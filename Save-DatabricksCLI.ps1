@@ -6,8 +6,7 @@ param([switch]$RegisterPathInCurrentSession)
 
 $ErrorActionPreference = "Stop"
 
-
-$VERSION = "0.203.1" # Bump this version for newer versions
+$VERSION = "0.212.3" # Bump this version for newer versions
 $FILE = "databricks_cli_$VERSION"
 $TARGET = "$PSScriptRoot/databricks-cli"
 
@@ -20,6 +19,8 @@ elseif ($IsLinux) {
 }
 elseif ($IsMacOS) {
     $FILE = "${FILE}_darwin"
+} else {
+    $FILE = "${FILE}_linux"
 }
 
 if ($FILE -eq "databricks_cli_$VERSION") {
@@ -30,7 +31,6 @@ if ($FILE -eq "databricks_cli_$VERSION") {
 $FILE = "${FILE}_amd64"
 
 New-Item -ItemType Directory -Force -Path $TARGET
-
 # Download release archive.
 Invoke-WebRequest -Uri "https://github.com/databricks/cli/releases/download/v${VERSION}/${FILE}.zip" -OutFile "${FILE}.zip"
 
@@ -39,10 +39,15 @@ Expand-Archive -Path "${FILE}.zip" -DestinationPath $TARGET -Force
 
 Remove-Item "${FILE}.zip"
 
-if($IsLinux -or $IsMacOS){
+if ($IsLinux -or $IsMacOS) {
     & chmod +x "$TARGET/databricks"
 }
 
-if($RegisterPathInCurrentSession) {
-    $Env:Path += [IO.Path]::PathSeparator + $TARGET
+if ($RegisterPathInCurrentSession) {
+    if (($Env:OS -eq "Windows_NT") -or $IsWindows ) {
+         $Env:Path += [IO.Path]::PathSeparator + $TARGET
+    }
+    else {
+        $Env:PATH += [IO.Path]::PathSeparator + $TARGET
+    }
 }
