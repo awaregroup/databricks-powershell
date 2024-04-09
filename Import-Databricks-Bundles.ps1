@@ -7,7 +7,8 @@ param
   [parameter(Mandatory = $false)] [switch] $validate = $false
 )
 $ErrorActionPreference = "Stop"
-$Env:DATABRICKS_CONFIG_FILE = "$PSScriptRoot\databrickscfg.toml"
+$DirectorySplitChar = [System.IO.Path]::DirectorySeparatorChar 
+$Env:DATABRICKS_CONFIG_FILE = "${PSScriptRoot}${DirectorySplitChar}databrickscfg.toml"
 $Env:DATABRICKS_CONFIG_PROFILE = $env
 
 if ($workspaceUrlOrId -notlike "http*") {
