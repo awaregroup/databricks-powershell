@@ -6,14 +6,15 @@ param([switch]$RegisterPathInCurrentSession)
 
 $ErrorActionPreference = "Stop"
 
-$VERSION = "0.212.3" # Bump this version for newer versions
+$VERSION = "0.217.0" # Bump this version for newer versions
 $FILE = "databricks_cli_$VERSION"
 $TARGET = "$PSScriptRoot/databricks-cli"
 
 # Include operating system in file name.
 if (($Env:OS -eq "Windows_NT") -or $IsWindows ) {
     $FILE = "${FILE}_windows"
-} elseif ($IsMacOS) {
+}
+elseif ($IsMacOS) {
     $FILE = "${FILE}_darwin"
 } else {
     $FILE = "${FILE}_linux"
@@ -27,6 +28,7 @@ if ($FILE -eq "databricks_cli_$VERSION") {
 $FILE = "${FILE}_amd64"
 
 New-Item -ItemType Directory -Force -Path $TARGET
+Write-Host "Downloading from https://github.com/databricks/cli/releases/download/v${VERSION}/${FILE}.zip"
 # Download release archive.
 Invoke-WebRequest -Uri "https://github.com/databricks/cli/releases/download/v${VERSION}/${FILE}.zip" -OutFile "${FILE}.zip"
 
