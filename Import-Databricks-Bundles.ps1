@@ -60,7 +60,7 @@ foreach ($bundle in $databricksBundleFiles) {
         # We have a pool that matches the name set in instance_pool_id, lets replace it.
         $replacement_string = $replacement_string_lookup.Replace($job_match.instance_pool_name, $job_match.instance_pool_id)
         Write-Host("Replacing [$replacement_string_lookup] with [$replacement_string]")
-        $content.Replace($replacement_string_lookup, $replacement_string) | Set-Content $bundle.FullName -Force
+        $content = $content.Replace($replacement_string_lookup, $replacement_string)
       }
       else {
         $job_id = ($pools | Where-Object instance_pool_id -eq $potential_pool_match) | Select-Object -First 1
@@ -69,6 +69,7 @@ foreach ($bundle in $databricksBundleFiles) {
         }        
       }
     }
+    Set-Content $bundle.FullName $content -Force
   }
 
   # Do the deployment  
