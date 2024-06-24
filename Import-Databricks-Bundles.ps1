@@ -42,36 +42,6 @@ foreach ($bundle in $databricksBundleFiles) {
   # Collect all the bundle files in our resources directory.
   $bundleFiles = Get-ChildItem -Path $directory -Filter "*.yml" -Recurse -File | Where-Object { $_.FullName -like '*resources\*' } 
 
-  # Check the bundles for valid instance pool or driver pools references.
-  # It can be easier to specify the name so if somebody has done this convert it to an identifier.
-  foreach ($bundle in $bundleFiles) {    
-    # Find all instance pool references (shared cluster pools)
-    $instance_pool_id_pattern = '(instance_pool_id|driver_instance_pool_id):\s+(\S+)'
-    $content = (Get-Content -path $bundle.FullName)
-    # Check the content of the bundle to see if it has any instance pool references
-    $pool_matches = [regex]::Matches($content, $instance_pool_id_pattern)    
-    foreach ($match in $pool_matches) {
-      # This resolves to the value that instance_pool_id is currently set to.
-      $potential_pool_match = $match.Groups[2].Value
-      # This resolves to the full line that we potentially will be replacing
-      $replacement_string_lookup = $match.Groups[0].Value
-      $job_match = ($pools | Where-Object instance_pool_name -eq $potential_pool_match) | Select-Object -First 1
-      if ($job_match) {
-        # We have a pool that matches the name set in instance_pool_id, lets replace it.
-        $replacement_string = $replacement_string_lookup.Replace($job_match.instance_pool_name, $job_match.instance_pool_id)
-        Write-Host("Replacing [$replacement_string_lookup] with [$replacement_string]")
-        $content = $content.Replace($replacement_string_lookup, $replacement_string)
-      }
-      else {
-        $job_id = ($pools | Where-Object instance_pool_id -eq $potential_pool_match) | Select-Object -First 1
-        if (!$job_id) {
-          Write-Warning "Could not find the identifier ${potential_pool_match} provided in the bundle ${bundle}, bundle deployment may fail"
-        }        
-      }
-    }
-    Set-Content $bundle.FullName $content -Force
-  }
-
   # Do the deployment  
   if ($validate) {
     Write-Host "Validating $directory..."
